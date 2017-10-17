@@ -72,8 +72,18 @@ class Chart(object):
                 'or one a custom chart type.')
 
     def get_configuration(self, *args, **kwargs):
-        config = self.chartjs_configuration(*args, **kwargs)
-        return json.dumps(config, cls=self.json_encoder_class)
+        config = self.chartjs_configuration(*args, **kwargs)        
+        ## 20171003-Extract function name called by onCLick and supress the " char.
+        jsonrender=json.dumps(config, cls=self.json_encoder_class)
+        pat=re.search('"onClick" *: *"\w+"',jsonrender)
+        tab=re.split('"onClick" *: *"\w+"',jsonrender)
+        f=re.search('"onClick" *: *(?P<fonction>"\w+")',pat.group())
+
+        if f.group('fonction') is not None:
+            return '%s %s %s'%(tab[0],re.sub(f.group('fonction'),f.group('fonction').replace('"',''),pat.group(0)),tab[1])
+        else:
+            return jsonrender
+
 
     def chartjs_configuration(self, *args, **kwargs):
         self._assert_chart_type()
