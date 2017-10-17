@@ -1,4 +1,5 @@
 import uuid
+import re
 
 from django.template.loader import render_to_string
 from django.core.exceptions import ImproperlyConfigured
